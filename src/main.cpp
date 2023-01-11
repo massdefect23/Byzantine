@@ -198,4 +198,22 @@ class Process {
                 return mTraits.GetDefault();
             return unknown;
         }
+
+        void RecieveMessage(const Path &path, const Node &node)
+        {
+            mNodes[path] = node;
+        }
+
+        static void GenerateChildren(
+            const size_t m,
+            const size_t n,
+            std::vector<bool> ids,
+            int source = mTraits.mSource,
+            Path current_path = "",
+            size_t rank = 0
+        )
+
+        {
+            
+        }
 };
