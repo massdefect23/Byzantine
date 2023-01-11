@@ -21,6 +21,7 @@ struct Node {
 
 class Traits {
     public : 
+
         Traits(int source, int m, int n, bool debug = false)
             : mSource(source), mM(m), mN(n), mDebug(debug) {}
 
@@ -37,5 +38,19 @@ class Traits {
                 return value;
         }
 
-        
-}
+        char GetDefault() {
+            return one;
+        }
+
+        bool IsFaulty(int process) {
+            if (process == mSource || process == 2)
+                return true;
+            else
+                return false;
+        }
+
+        const int mSource;
+        const int mM;
+        const size_t mN;
+        const bool mDebug;
+};
