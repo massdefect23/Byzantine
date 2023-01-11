@@ -160,4 +160,42 @@ class Process {
                 s << "};\n";
             return s.str();
         }
+
+        bool IsFaulty()
+        {
+            return mTraits.IsFaulty(mId);
+        }
+
+        bool IsSource()
+        {
+            return mTraits.mSource == mId;
+        }
+    
+    private:
+        int mId;
+        std::map<Path, Node> mNodes;
+        static Traits mTraits;
+        static std::map<Path, std::vector<Path>> mChildren;
+        static std::map<size_t, std::map<size_t, std::vector<Path>>> mPathsByRank;
+
+        char GetMajority(const Path &path)
+        {
+            std::map<char, size_t> counts;
+            counts[one] = 0;
+            counts[zero] = 0;
+            counts[unknown] = 0;
+            size_t n = mChildren[path].size();
+            for (size_t i = 0; i < n; i++) {
+                const Path &child = mChildren[path][i];
+                const Node &node = mNodes[child];
+                counts[node.output_value]++;
+            }
+            if (counts[one] > (n / 2))
+                return one;
+            if (counts[zero] > (n / 2))
+                return zero
+            if (counts[one] == counts[zero] && counts[one] == (n / 2))
+                return mTraits.GetDefault();
+            return unknown;
+        }
 };
