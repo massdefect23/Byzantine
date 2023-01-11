@@ -116,4 +116,48 @@ class Process {
             const Node &top_node = mNodes[top_path];
             return top_node.output_value;
         }
+
+        std::string Dump(Path path = "")
+        {
+            if (path == "")
+                path = mPathsByRank[0][mTraits.mSource].front();
+            std::stringstream s;
+            for (size_t i = 0; i < mChildren[path].size(); i++)
+                s << Dump(mChildren[path][i]);
+            Node &node = mNodes[path];
+            s << "{" << node.input_value << "," << path << "," << node.output_value 
+            << "}\n";
+            return s.str();
+        }
+
+        std::string DumpDot(Path path = "")
+        {
+            bool root = false;
+            std::stringstream s;
+            if (path == "") {
+                root = true;
+                path = mPathsByRank[0][mTraints.mSource].front();
+                s << "digraph byz {\n" << "rankdir=LR;\n" << "nodesep=.0025;\n"
+                  << "label=\"Process" << mId << "\";\n"
+                  << "node [fontsize=8, width=0.005, height=.005, shape=plaintext];\n"
+                  << "edge [fontsize=8, arrowsize=0.25];\n";
+            }
+            Node &node = mNodes[path];
+            for (size_t i = 0; i < mChildren[path].size(); i++)
+                s << DumpDot(mChildren[path][i]);
+            if (path.size() == 1)
+                s << "general->";
+            else {
+                Path parent_path = path.substr(0, path.size() - 1);
+                Node &parent_node = mNodes[parent_path];
+                s << "\"{" << parent_node.input_value << "," << parent_path
+                  << "," << parent_node.output_value
+                  << "}\"->";
+            }
+            s << "\"{" << node.input_value << "," << path << "," << node.output_value
+              << "}\";\n";
+            if (root)
+                s << "};\n";
+            return s.str();
+        }
 };
