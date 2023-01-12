@@ -61,7 +61,7 @@ class Process {
             if (mChildren.size() == 0)
                 GenerateChildren(mTraits.mM, mTraits.mN, std::vector<bool>(mTraits.mN, true));
             if (mId == mTraits.mSource)
-                mNodes[""] = mtraits.GetSourceValue();
+                mNodes[""] = mTraits.GetSourceValue();
         }
 
         void SendMessages(int round, std::vector<Process> &processes) {
@@ -214,6 +214,69 @@ class Process {
         )
 
         {
-            
+            ids[source] = false;
+            current_path += static_cast<char>(source + '0');
+            mPathsByRank[rank][source].push_back(current_path);
+            if (rank < m)
+                for (int i = 0; i < static_cast<int>(ids.size()); i++)
+                    if (ids[i]) {
+                        GenerateChildren(m, n, ids, i, current_path, rank + 1);
+                        mChildren[current_path].push_back(current_path + static_cast<char>(i + '0'));
+                    }
+            if (mTraits.mDebug) {
+                std::cout << current_path << ", children = ";
+                for (size_t j = 0; j < mChildren[current_path].size(); j++)
+                    std::cout << mChildren[current_path][j] << " ";
+                std::out << "\n";
+            }
         }
 };
+
+const int N = 7;
+const int M = 2;
+const int source = 3;
+const bool debug = false;
+
+std::map<Path, std::vector<Path>> Process::mChildren;
+std::map<size_t, std::map<size_t, std::vector<Path>> Process::mPathsByRank;
+Traits Process::mTraits = Traits(source, m, n, debug);
+
+
+int main()
+{
+    std::vector<Process> processes;
+    for (int i = 0; i < N; i++)
+        processes.push_back(Process(i));
+    for (int i = 0; i <= M; i++)
+        for (int j = 0; j < N; j++)
+            processes[j].SendMessages(i, processes);
+    
+    for (int j = 0; j < N; j++) {
+        if (processes[j].IsSource())
+            std::cout << "Source ";
+        std::cout << "Process " << j;
+        if (!processes[j].IsFaulty())
+            std::cout << " decides on value " << processes[j].Decide();
+        else
+            std::cout << " is faulty";
+        std::cout << "\n";
+    }
+    std::cout << "\n";
+    for ( ;; ) {
+        std::string s;
+        std::cout << "ID of process to dump, or enter to quit: ";
+        getline(std::cin, s);
+        if  (s.size() == 0)
+            break;
+        int id;
+        std::stringstream s1(s);
+        s1 >> id;
+
+        if (debug) {
+            std::cout << processes[id].Dump() << "\n";
+            getLine(std::cin, s);
+        }
+        std::cout << processes[id].DumpDot() << "\n";
+    }
+    return 0;
+}
