@@ -84,7 +84,7 @@ class Process {
                                       << ", " << unknown << "}"
                                       << ", getting value from source_node " << source_node_path
                                       << "\n";
-                        processes[j].RecieveMessage(mPathsByRank[round][mId][i], Node(value, unknown));
+                        processes[j].ReceiveMessage(mPathsByRank[round][mId][i], Node(value, unknown));
                     }
             }
         }
@@ -94,7 +94,7 @@ class Process {
             if (mId == mTraits.mSource)
                 return mNodes[""].input_value;
 
-            for (size_t = 0; i < mTraits.mN; i++)
+            for (size_t i = 0; i < mTraits.mN; i++)
                 for (size_t j = 0; j < mPathsByRank[mTraits.mM][i].size(); j++)
                 {
                     const Path &path = mPathsByRank[mTraits.mM][i][j];
@@ -175,8 +175,8 @@ class Process {
         int mId;
         std::map<Path, Node> mNodes;
         static Traits mTraits;
-        static std::map<Path, std::vector<Path>> mChildren;
-        static std::map<size_t, std::map<size_t, std::vector<Path>>> mPathsByRank;
+        static std::map<Path, std::vector<Path > > mChildren;
+        static std::map<size_t, std::map<size_t, std::vector<Path > > > mPathsByRank;
 
         char GetMajority(const Path &path)
         {
@@ -193,7 +193,7 @@ class Process {
             if (counts[one] > (n / 2))
                 return one;
             if (counts[zero] > (n / 2))
-                return zero
+                return zero;
             if (counts[one] == counts[zero] && counts[one] == (n / 2))
                 return mTraits.GetDefault();
             return unknown;
@@ -226,31 +226,31 @@ class Process {
                 std::cout << current_path << ", children = ";
                 for (size_t j = 0; j < mChildren[current_path].size(); j++)
                     std::cout << mChildren[current_path][j] << " ";
-                std::out << "\n";
+                std::cout << "\n";
             }
         }
 };
 
-const int N = 7;
-const int M = 2;
+const int n = 7;
+const int m = 2;
 const int source = 3;
 const bool debug = false;
 
-std::map<Path, std::vector<Path>> Process::mChildren;
-std::map<size_t, std::map<size_t, std::vector<Path>> Process::mPathsByRank;
+std::map<Path, std::vector<Path > > Process::mChildren;
+std::map<size_t, std::map<size_t, std::vector<Path > > > Process::mPathsByRank;
 Traits Process::mTraits = Traits(source, m, n, debug);
 
 
 int main()
 {
     std::vector<Process> processes;
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
         processes.push_back(Process(i));
-    for (int i = 0; i <= M; i++)
-        for (int j = 0; j < N; j++)
+    for (int i = 0; i <= m; i++)
+        for (int j = 0; j < n; j++)
             processes[j].SendMessages(i, processes);
     
-    for (int j = 0; j < N; j++) {
+    for (int j = 0; j < n; j++) {
         if (processes[j].IsSource())
             std::cout << "Source ";
         std::cout << "Process " << j;
@@ -273,7 +273,7 @@ int main()
 
         if (debug) {
             std::cout << processes[id].Dump() << "\n";
-            getLine(std::cin, s);
+            getline(std::cin, s);
         }
         std::cout << processes[id].DumpDot() << "\n";
     }
