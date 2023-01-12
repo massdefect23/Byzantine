@@ -102,7 +102,7 @@ class Process {
                     node.output_value = node.input_value;
                 }
 
-            for (int round = (int) mtraits.mM - 1; round >= 0; round--)
+            for (int round = (int) mTraits.mM - 1; round >= 0; round--)
             {
                 for (size_t i = 0; i < mTraits.mN; i++)
                     for (size_t j = 0; j < mPathsByRank[round][i].size(); j++)
@@ -136,7 +136,7 @@ class Process {
             std::stringstream s;
             if (path == "") {
                 root = true;
-                path = mPathsByRank[0][mTraints.mSource].front();
+                path = mPathsByRank[0][mTraits.mSource].front();
                 s << "digraph byz {\n" << "rankdir=LR;\n" << "nodesep=.0025;\n"
                   << "label=\"Process" << mId << "\";\n"
                   << "node [fontsize=8, width=0.005, height=.005, shape=plaintext];\n"
@@ -199,18 +199,17 @@ class Process {
             return unknown;
         }
 
-        void RecieveMessage(const Path &path, const Node &node)
+        void ReceiveMessage(const Path &path, const Node &node)
         {
             mNodes[path] = node;
         }
 
-        static void GenerateChildren(
-            const size_t m,
-            const size_t n,
-            std::vector<bool> ids,
-            int source = mTraits.mSource,
-            Path current_path = "",
-            size_t rank = 0
+        static void GenerateChildren( const size_t m,
+                                      const size_t n,
+                                      std::vector<bool> ids,
+                                      int source = mTraits.mSource,
+                                      Path current_path = "",
+                                      size_t rank = 0
         )
 
         {
